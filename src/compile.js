@@ -29,7 +29,10 @@ class Compile {
                 this.compileElement(node);
             }
             else if (this.isText(node)) {
-                this.textCompile(node)
+                this.textCompile(node);
+            }
+            if (node && node.childNodes.length) {
+                this.compile(node);
             }
         });
     }
@@ -43,16 +46,28 @@ class Compile {
                 CompileUtil[name] &&
                     CompileUtil[name](node, attr.nodeValue, this.vm);
             }
+            const isEvent = this.isEventDirective(attrName);
+            if (isEvent) {
+                CompileUtil.eventHandler(this.vm, node, isEvent[1], attr.nodeValue)
+            }
         });
     }
     textCompile(node) {
-        let txt = node.textContent;
-        var reg = new RegExp(/{\{.+?\}\}/, "g");
-        txt.replace(reg, (...data) => {
-            console.log(data)
-        })
-
+        let txt = this.newMethod(node);
+        var reg = /\{\{((.|\n)+?)\}\}/g;
+        node.textContent = txt.replace(reg, (...data) => {
+            if (data[1] !== undefined) {
+                return CompileUtil.getValue(this.vm, data[1].trim())
+            }
+            else {
+                return '';
+            }
+        });
     }
+    newMethod(node) {
+        return node.textContent;
+    }
+
     //工具方法
     isElementNode(node) {
         return node.nodeType === 1;
@@ -63,22 +78,50 @@ class Compile {
     isDirective(attrName) {
         return attrName.startsWith("v-");
     }
+    isEventDirective(attrName) {
+        return /^(?:(?:v-on:)|@)([a-zA-Z_]\w*)/.exec(attrName)
+    }
 }
 let CompileUtil = {
     text(node, val, vm) {
         node.textContent = this.getValue(vm, val);
     },
     html(node, val, vm) {
-        node.innerHTML = this.getVMValue(vm, expr);
+        node.innerHTML = this.getVMValue(vm, val);
     },
-    model() {
-
+    model(node, val, vm) {
+        if (node.localName === 'input') {
+            node.value = this.getValue(vm, val);
+            window.addEventListener('input', ({ target }) => {
+                this.setValue(vm, val, target.value)
+            })
+        }
+    },
+    eventHandler(vm, node, eventName, handler) {
+        const fn = vm.methods[handler];
+        if (fn === undefined) {
+            new Error("异常信息");
+        }
+        node.addEventListener(eventName, fn.bind(vm))
+    },
+    show(node, val, vm) {
+        const data = this.getValue(vm, val);
+        if (!data) node.style.display = 'none';
     },
     getValue(vm, expr) {
         let disposeData = vm.$data;
-        expr.split('.').map(v => {
+        expr.split(".").map(v => {
             disposeData = disposeData[v];
-        })
+        });
         return disposeData;
+    },
+    setValue(vm, expr, data) {
+        let disposeData = vm.$data;
+        const arr = expr.split(".");
+        arr.map((v, index) => {
+            if (index < arr.length - 1) disposeData = disposeData[v];
+            else disposeData[v] = data;
+
+        });
     }
 };

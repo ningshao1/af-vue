@@ -2,34 +2,45 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
 </head>
 
 <body>
-    <div id='app'>
-        <div>{{c}}</div>
-        <div v-text='c'>
+    <div id="app">
+        <div @click='clickHandler'>点击我</div>
+        <div>{{
+
+            c
+             }}www{{
+            a.b
+         }}</div>
+            <div v-text="c"></div>
+            <div v-show='true'>能看见我吗</div>
+            <input type="text" v-model='c'>
         </div>
-    </div>
 </body>
 <script src="./src/vue.js"></script>
-<script src="./src/compile.js"></script>
+<!-- <script src="./src/compile.js"></script> -->
 <script>
-    new vue({
-        el: '#app',
+    var Vue = new vue({
+        el: "#app",
         data: {
             a: {
                 b: 1
             },
-            c: 2
+            c: 2,
+            abc: 1,
+            we: false
         },
         methods: {
-
+            clickHandler() {
+                console.log(this)
+            }
         }
-    })
+    });
 </script>
 
 </html>
