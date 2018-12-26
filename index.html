@@ -15,24 +15,28 @@
 
             c
              }}www{{
-            a.b
+            a
          }}</div>
-            <div v-text="c"></div>
-            <div v-show='true'>能看见我吗</div>
-            <input type="text" v-model='c'>
+            {{b}}
+            <div v-text="e.c"></div>
+            <input type="text" v-model='e.c'>
         </div>
 </body>
 <script src="./src/vue.js"></script>
-<!-- <script src="./src/compile.js"></script> -->
+<script src="./src/watch.js"></script>
+<script src="./src/compile.js"></script>
+<script src="./src/observer.js"></script>
 <script>
-    var Vue = new vue({
+    var vm = new vue({
         el: "#app",
         data: {
-            a: {
-                b: 1
-            },
+            a: 2,
             c: 2,
             abc: 1,
+            b: 2,
+            e: {
+                c: 1
+            },
             we: false
         },
         methods: {

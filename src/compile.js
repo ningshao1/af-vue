@@ -55,6 +55,7 @@ class Compile {
     textCompile(node) {
         let txt = this.newMethod(node);
         var reg = /\{\{((.|\n)+?)\}\}/g;
+
         node.textContent = txt.replace(reg, (...data) => {
             if (data[1] !== undefined) {
                 return CompileUtil.getValue(this.vm, data[1].trim())
@@ -63,6 +64,16 @@ class Compile {
                 return '';
             }
         });
+        new Watcher(this.vm, RegExp.$1.trim(), () => {
+            node.textContent = txt.replace(reg, (...data) => {
+                if (data[1] !== undefined) {
+                    return CompileUtil.getValue(this.vm, data[1].trim())
+                }
+                else {
+                    return '';
+                }
+            });
+        })
     }
     newMethod(node) {
         return node.textContent;
@@ -85,13 +96,22 @@ class Compile {
 let CompileUtil = {
     text(node, val, vm) {
         node.textContent = this.getValue(vm, val);
+        new Watcher(vm, val, () => {
+            node.textContent = this.getValue(vm, val);
+        })
     },
     html(node, val, vm) {
-        node.innerHTML = this.getVMValue(vm, val);
+        node.innerHTML = this.getValue(vm, val);
+        new Watcher(vm, val, () => {
+            node.innerHTML = this.getValue(vm, val);
+        })
     },
     model(node, val, vm) {
         if (node.localName === 'input') {
             node.value = this.getValue(vm, val);
+            new Watcher(vm, val, () => {
+                node.value = this.getValue(vm, val);
+            })
             window.addEventListener('input', ({ target }) => {
                 this.setValue(vm, val, target.value)
             })

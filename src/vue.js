@@ -1,19 +1,12 @@
 class vue {
     constructor(option = {}) {
         this.$el = option.el;
-        this.$data = option.data;
+        this._data = option.data
         this.methods = option.methods;
-        this.createScript();
+        this.init(option.data);
     }
-    createScript() {
-        var script = document.createElement('script');
-        script.src = 'src/compile.js'
-        document.querySelector('body').appendChild(script);
-        script.onload = () => {
-            this.init();
-        }
-    }
-    init() {
-        new Compile(this.$el, this);
+    init(data) {
+        this.$data = new observer(data)
+        new Compile(this.$el, this)
     }
 }
