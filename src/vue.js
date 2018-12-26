@@ -9,4 +9,5 @@ class vue {
         this.$data = new observer(data)
         new Compile(this.$el, this)
     }
+    
 }
