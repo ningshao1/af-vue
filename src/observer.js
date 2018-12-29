@@ -1,3 +1,4 @@
+import { Dep } from './watch.js';
 class observer {
     constructor(data, cb) {
         return this.walk(data, cb);
@@ -6,7 +7,6 @@ class observer {
         const dep = new Dep();
         const handler = {
             get(target, prop, receiver) {
-                debugger
                 Dep.target && dep.addSub(Dep.target);
                 try {
                     return new Proxy(target[prop], handler);
@@ -16,11 +16,12 @@ class observer {
                 }
             },
             set(target, prop, val, receiver) {
-                debugger
                 Reflect.set(target, prop, val, receiver);
                 dep.notify();
+                return true;
             }
         };
         return new Proxy(data, handler);
     }
 }
+export default observer;
