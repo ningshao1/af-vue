@@ -1,7 +1,7 @@
 import observer from './observer.js';
 import Compile from './compile.js';
 
-export default class vue {
+class vue {
     constructor(option = {}) {
         this.$el = option.el;
         this._data = option.data
