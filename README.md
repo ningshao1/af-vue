@@ -1,5 +1,6 @@
-#ADC-VUE
-模拟 vue 实现的方式 数据监听使用 proxy 实现
+# ADC-VUE
+<br />
+模拟 vue 实现的方式 数据监听使用 proxy 实现<br />
 实例
 
 ```javascript
